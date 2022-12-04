@@ -2,52 +2,48 @@
 
 namespace Tests\Feature;
 
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PostsTest extends TestCase
 {
+    use DatabaseMigrations;
     use RefreshDatabase;
+    use WithFaker;
 
-    /** @test */
-    public function user_can_create_a_post()
+    protected $user;
+    protected $categories;
+
+     /** @test */
+    public function test_user_can_browse_posts_index_page()
     {
-        $this->visit('/posts/create');
-
-        $this->submitForm('Save', [
-            'title' => 'Laravel Task',
-            
-            'content' => 'Laravel adalah framework php'
+        $postOne = Post::create([
+            'id' => 15,
+            'user_id' => 2,
+            'category_id' => 2,
+            'title' => 'Belajar Laravel 8 at qadrLabs edisi 1',
+            'content' => 'ini adalah tutorial belajar laravel 8 edisi 1',
+            'image' => 'sadasdas',
+            'user_id' => 1
         ]);
 
-        $this->seeInDatabase('posts', [
-            'title' => 'Laravel Task',
-
-            'content' => 'Laravel adalah framework php'
+        $postTwo = Post::create([
+            'title' => 'Belajar Laravel 8 at qadrLabs edisi 2',
+            'category_id' => 4,
+            'image' => 'sadasdas',
+            'content' => 'ini adalah tutorial belajar laravel 8 edisi 2',
+            'user_id' => 1
         ]);
 
-        $this->seePageIs('/posts');
+        // user membuka halaman daftar post
+        $this->visit('/posts');
 
-        $this->see('Laravel Task');
-        $this->see('Publish');
-    }
-
-    /** @test */
-    public function user_can_browse_posts_index_page()
-    {
-        $this->assertTrue(true);
-    }
-
-    /** @test */
-    public function user_can_edit_existing_post()
-    {
-        $this->assertTrue(true);
-    }
-
-    /** @test */
-    public function user_can_delete_existing_post()
-    {
-        $this->assertTrue(true);
+        // user melihat dua title dari data post
+        $this->see('Belajar Laravel 8 at qadrLabs edisi 1');
+        $this->see('Belajar Laravel 8 at qadrLabs edisi 2');
     }
 }

@@ -17,7 +17,7 @@ class PostController extends Controller
     public function index()
     {
         return view('blog.index', [
-            'posts' => Post::first()->where('user_id', auth()->user()->id)->get()
+            'posts' => Post::latest()->where('user_id', auth()->user()->id)->get()
         ]);
     }
 
@@ -42,7 +42,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validationRules = $request->validate([
-            'title' => ['required', 'max:100', 'min:5'],
+            'title' => ['required', 'max:100', 'min:5', 'unique:posts'],
             'category_id' => ['required'],
             'image' => ['image', 'file', 'max:1024'],
             'content' => ['required', 'min:5']
@@ -66,12 +66,14 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        if ($post->user->id === auth()->user()->id) {
+            return view('blog._detail', [
+                'post' => $post
+            ]);
+        }
         if ($post->user->id !== auth()->user()->id) {
             abort(403);
         }
-        return view('blog._detail', [
-            'post' => $post
-        ]);
     }
 
     /**
@@ -82,13 +84,15 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if ($post->user->id === auth()->user()->id) {
+            return view('blog.form.edit', [
+                'post' => $post,
+                'categories' => Category::all()
+            ]);
+        }
         if ($post->user->id !== auth()->user()->id) {
             abort(403);
         }
-        return view('blog.form.edit', [
-            'post' => $post,
-            'categories' => Category::all()
-        ]);
     }
 
     /**
@@ -101,7 +105,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         $rules = [
-            'title' => ['required', 'max:255'],
+            'title' => ['required', 'max:255', 'unique:posts'],
             'category_id' => 'required',
             'image' => ['image', 'file', 'max:1024'],
             'content' => 'required'
@@ -111,22 +115,19 @@ class PostController extends Controller
             $rules['slug'] = ['required', 'unique:posts'];
         }
 
-        // Lolos validasi
-        $validatedData = $request->validate($rules);
+        $validated = $request->validate($rules);
 
-        // Jika ada image baru, upload
-        if ($request->file('image')) {
-            // Jika image lamanya ada
+        if ($request->file('image')) 
+        {
             if ($request->oldImage) {
                 Storage::delete($request->oldImage);
             }
-            // Diisi dengan upload image dan nama image
-            $validatedData['image'] = $request->file('image')->store('post-images');
+
+            $validated['image'] = $request->file('image')->store('post-images');
         }
 
-        $validatedData['user_id'] = auth()->user()->id;
-
-        Post::where('id', $post->id)->update($validatedData);
+        $validated['user_id'] = auth()->user()->id;
+        Post::where('id', $post->id)->update($validated);
 
         return redirect('/posts')->with('success', 'Post success has been updated');
     }
@@ -139,12 +140,19 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        if ($post->image) {
-            Storage::delete($post->image);
+
+        if ($post->user->id === auth()->user()->id) 
+        {
+            if ($post->image) {
+                Storage::delete($post->image);
+            }
+
+            Post::destroy($post->id);
+            return redirect('/posts')->with('success', 'Post success has been deleted!');
+        }
+        if ($post->user->id === auth()->user()->id) {
+            abort(403);
         }
 
-        Post::destroy($post->id);
-
-        return redirect('/posts')->with('success', 'Post success has been deleted!');
     }
 }

@@ -150,7 +150,8 @@ class CategoryController extends Controller
             ], 200);
         } 
 
-        if (!$categories->delete()){
+        if (!$categories->delete())
+        {
             return response()->json([
                 'status' => false,
                 'message' => 'Category failed delete'

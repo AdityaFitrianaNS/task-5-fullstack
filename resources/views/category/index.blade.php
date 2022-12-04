@@ -5,20 +5,25 @@
         <div class="row">
             @if ($categories->count())
                 <div class="pt-2 card-header-text">
-                    <h3 class="card-title">All Categories</h3>
+                    <h3 class="card-title fw-semibold">All Categories</h3>
                     <p class="sub-text">
-                        Last update {{ $categories[0]->updated_at->format('d F, H:i') }}
+                        Last update, {{ $categories[0]->updated_at->format('d F, H:i') }}
                     </p>
+
+                    @if (session()->has('success'))
+                        <div class="alert alert-success col-lg-12" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
                     <a href="categories/create" class="btn btn-primary">
                         Add Category
                     </a>
                 </div>
-                
+
                 @foreach ($categories as $category)
                     <div class="col-12 col-md-6 col-lg-4 mt-3">
                         <div class="card">
-
                             <div class="card bg-dark text-white" id="category">
                                 <img src="https://picsum.photos/500?{{ $category->name }}" class="card-img img-fluid"
                                     alt="{{ $category->name }}" style="object-fit: cover; height: 150px;">

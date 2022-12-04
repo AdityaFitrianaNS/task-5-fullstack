@@ -26,7 +26,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('category.form.create');
     }
 
     /**
@@ -37,7 +37,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validationRules = $request->validate([
+            'name' => ['required', 'min:5', 'max:50', 'unique:categories']
+        ]);
+
+        $validationRules['user_id'] = auth()->user()->id;
+        Category::create($validationRules);
+
+        return redirect('/categories')->with('success', 'New category success has been added');
     }
 
     /**
@@ -59,7 +66,13 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        if ($category->user->id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        return view('category.form.edit', [
+            'category' => $category,
+        ]);
     }
 
     /**
@@ -71,7 +84,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $validationRules = $request->validate([
+            'name' => ['required', 'min:5', 'max:50', 'unique:categories']
+        ]);
+
+        $validationRules['user_id'] = auth()->user()->id;
+        Category::where('id', $category->id)->update($validationRules);
+
+        return redirect('/categories')->with('success', 'Category success has been updated');
     }
 
     /**
@@ -82,6 +102,13 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        if ($category->user->id === auth()->user()->id) {
+            Category::destroy($category->id);
+
+            return redirect('/categories')->with('success', 'Category success has been deleted!');
+        }
+        if ($category->user->id !== auth()->user()->id) {
+            abort(403);
+        }
     }
 }

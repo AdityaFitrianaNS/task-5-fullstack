@@ -152,7 +152,8 @@ class PostController extends Controller
             ], 200);
         } 
 
-        if (!$post->delete()){
+        if (!$post->delete())
+        {
             return response()->json([
                 'status' => false,
                 'message' => 'Post failed delete'

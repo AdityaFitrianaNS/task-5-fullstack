@@ -39,9 +39,13 @@
                         <option disabled selected>Select your category</option>
                         @foreach ($categories as $category)
                             @if (old('category_id') == $category->id)
-                                <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
+                                <option value="{{ $category->id }}" selected>
+                                    {{ $category->name }}
+                                </option>
                             @else
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}">
+                                    {{ $category->name }}
+                                </option>
                             @endif
                         @endforeach
                     </select>
@@ -54,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- Image -->
             <div class="mb-2">
                 <label for="formFile" class="form-label">Post Image</label>
                 <img class="img-preview img-fluid mb-3 col-sm-4">

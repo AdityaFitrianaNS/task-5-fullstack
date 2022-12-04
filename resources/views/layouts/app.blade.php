@@ -33,13 +33,13 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link {{ Request::is('home') ? 'active' : '' }}" href="home">Home</a>
+                            <a class="nav-link {{ Request::is('home') ? 'active' : '' }}" href="/home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ Request::is('posts') ? 'active' : '' }}" href="posts">Blog</a>
+                            <a class="nav-link {{ Request::is('posts') ? 'active' : '' }}" href="/posts">Blog</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ Request::is('categories') ? 'active' : '' }}" href="categories">Category</a>
+                            <a class="nav-link {{ Request::is('categories') ? 'active' : '' }}" href="/categories">Category</a>
                         </li>
                     </ul>
 
