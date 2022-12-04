@@ -21,29 +21,41 @@ class PostsTest extends TestCase
      /** @test */
     public function test_user_can_browse_posts_index_page()
     {
-        $postOne = Post::create([
-            'id' => 15,
-            'user_id' => 2,
-            'category_id' => 2,
-            'title' => 'Belajar Laravel 8 at qadrLabs edisi 1',
-            'content' => 'ini adalah tutorial belajar laravel 8 edisi 1',
-            'image' => 'sadasdas',
-            'user_id' => 1
+        $this->visit('/posts/create');
+
+        $this->submitForm('Save', [
+            'title' => 'Laravel Task',
+            
+            'content' => 'Laravel adalah framework php'
         ]);
 
-        $postTwo = Post::create([
-            'title' => 'Belajar Laravel 8 at qadrLabs edisi 2',
-            'category_id' => 4,
-            'image' => 'sadasdas',
-            'content' => 'ini adalah tutorial belajar laravel 8 edisi 2',
-            'user_id' => 1
+        $this->seeInDatabase('posts', [
+            'title' => 'Laravel Task',
+
+            'content' => 'Laravel adalah framework php'
         ]);
 
-        // user membuka halaman daftar post
-        $this->visit('/posts');
+        $this->seePageIs('/posts');
 
-        // user melihat dua title dari data post
-        $this->see('Belajar Laravel 8 at qadrLabs edisi 1');
-        $this->see('Belajar Laravel 8 at qadrLabs edisi 2');
+        $this->see('Laravel Task');
+        $this->see('Publish');
+    }
+
+    /** @test */
+    public function user_can_browse_posts_index_page()
+    {
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function user_can_edit_existing_post()
+    {
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function user_can_delete_existing_post()
+    {
+        $this->assertTrue(true);
     }
 }
